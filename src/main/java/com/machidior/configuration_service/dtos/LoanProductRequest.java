@@ -13,7 +13,9 @@ import lombok.*;
 public class LoanProductRequest {
 
     @NotNull(message = "Please provide product type.")
-    private LoanProductType productType;
+        private String productType;
     @NotBlank(message = "Name of the loan product must not be blank.")
+    @NotNull(message = "Name of the loan product must not be null.")
     private String name;
+    private String description;
 }

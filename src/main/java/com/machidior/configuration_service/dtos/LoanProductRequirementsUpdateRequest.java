@@ -1,6 +1,5 @@
 package com.machidior.configuration_service.dtos;
 
-import com.machidior.configuration_service.enums.CollateralType;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -11,9 +10,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Builder
-public class LoanProductRequirementsRequest {
-    @NotNull(message = "Requirement has no specific loan product.")
-    private Long productId;
+public class LoanProductRequirementsUpdateRequest {
+
     @NotNull(message = "Requires guarantor field must not be null.")
     private Boolean requiresGuarantor;
     private Integer minGuarantors;

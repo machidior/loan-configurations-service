@@ -1,46 +1,63 @@
 package com.machidior.configuration_service.service;
 
+import com.machidior.configuration_service.dtos.LoanProductTermsRequest;
 import com.machidior.configuration_service.enums.LoanProductType;
+import com.machidior.configuration_service.exceptions.ResourceNotFoundException;
+import com.machidior.configuration_service.mapper.LoanProductTermsMapper;
+import com.machidior.configuration_service.model.LoanProduct;
 import com.machidior.configuration_service.model.LoanProductTerms;
+import com.machidior.configuration_service.repo.LoanProductRepository;
 import com.machidior.configuration_service.repo.LoanProductTermsRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class LoanProductTermsService {
 
     private final LoanProductTermsRepository repository;
+    private final LoanProductRepository loanProductRepository;
+    private final LoanProductTermsMapper mapper;
 
-    public LoanProductTermsService(LoanProductTermsRepository repository) {
-        this.repository = repository;
-    }
 
-    public LoanProductTerms createOrUpdateTerms(LoanProductTerms terms) {
+    public LoanProductTerms createLoanProductTerms(LoanProductTermsRequest request) {
+        LoanProduct loanProduct = loanProductRepository.findById(request.getProductId())
+                        .orElseThrow(()->new ResourceNotFoundException("Loan product with id " + request.getProductId() + " is not found."));
+
+        LoanProductTerms terms = mapper.toEntity(request,loanProduct);
         validateTerms(terms);
         return repository.save(terms);
     }
 
-    public LoanProductTerms updateTerms(Long id, LoanProductTerms updatedTerms) {
+    public LoanProductTerms updateTerms(Long id, LoanProductTermsRequest request) {
         LoanProductTerms existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Terms not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Terms not found with ID: " + id));
+        LoanProduct loanProduct = loanProductRepository.findById(request.getProductId())
+                        .orElseThrow(()->new ResourceNotFoundException("Loan product with id " + request.getProductId() + " is not found"));
 
-        existing.setMinAmount(updatedTerms.getMinAmount());
-        existing.setMaxAmount(updatedTerms.getMaxAmount());
-        existing.setMonthlyInterestRate(updatedTerms.getMonthlyInterestRate());
-        existing.setMaximumTermMonths(updatedTerms.getMaximumTermMonths());
-        existing.setExtraRules(updatedTerms.getExtraRules());
-        existing.setMinGroupMembers(updatedTerms.getMinGroupMembers());
-        existing.setMaxGroupMembers(updatedTerms.getMaxGroupMembers());
+        existing.setLoanProduct(loanProduct);
+        existing.setMinAmount(request.getMinAmount());
+        existing.setMaxAmount(request.getMaxAmount());
+        existing.setMaximumTermMonths(request.getMaximumTermMonths());
+        existing.setMonthlyLoanFeeRate(request.getMonthlyLoanFeeRate());
+        existing.setLoanFeeRatePer2Months(request.getLoanFeeRatePer2Months());
+        existing.setMonthlyInterestRate(request.getMonthlyInterestRate());
+        existing.setExtraRules(request.getExtraRules());
+        existing.setMinGroupMembers(request.getMinGroupMembers());
+        existing.setMaxGroupMembers(request.getMaxGroupMembers());
 
         validateTerms(existing);
         return repository.save(existing);
     }
 
-    public LoanProductTerms getTermsByProduct(LoanProductType type) {
-        return repository.findByProductType(type)
-                .orElseThrow(() -> new RuntimeException("Loan product terms not found for type: " + type));
+    public LoanProductTerms getTermsByProductType(LoanProductType productType) {
+        LoanProduct loanProduct = loanProductRepository.findByProductType(productType)
+                .orElseThrow(()->new ResourceNotFoundException("Loan product with the product type " +productType + " is not found."));
+        return repository.findByLoanProduct(loanProduct)
+                .orElseThrow(() -> new RuntimeException("Loan product terms not found for type: " + productType));
     }
 
     public List<LoanProductTerms> getAllTerms() {
@@ -59,10 +76,9 @@ public class LoanProductTermsService {
     }
 
     private void validateTerms(LoanProductTerms terms) {
-        if (terms.getProductType() == null)
-            throw new IllegalArgumentException("Product type is required.");
 
-        if (terms.getProductType().name().equals("GROUP_PRODUCT")) {
+
+        if (terms.getLoanProduct().getProductType().name().equals("GROUP_PRODUCT")) {
             if (terms.getMinGroupMembers() == null || terms.getMaxGroupMembers() == null)
                 throw new IllegalArgumentException("Group products must specify min and max group members.");
         }

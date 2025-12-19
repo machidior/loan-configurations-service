@@ -4,8 +4,11 @@ package com.machidior.configuration_service.model;
 import com.machidior.configuration_service.enums.LoanProductType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "loan_product_terms")
@@ -20,7 +23,9 @@ public class LoanProductTerms {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private LoanProduct loanProduct;
 
     @Column(name = "min_amount")
     private BigDecimal minAmount;
@@ -48,4 +53,9 @@ public class LoanProductTerms {
 
     @Column(name = "extra_rules", columnDefinition = "TEXT")
     private String extraRules;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

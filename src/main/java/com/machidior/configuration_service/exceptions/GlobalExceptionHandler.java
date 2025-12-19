@@ -37,4 +37,30 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(InvalidEnumException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidEnumException(
+            ResourceNotFoundException e,
+            WebRequest webRequest
+    ){
+        ExceptionResponse response = new ExceptionResponse(
+                e.getMessage(),
+                webRequest.getDescription(false),
+                "INVALID ENUM"
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResourceDuplicateException.class)
+    public ResponseEntity<ExceptionResponse> handleResourceDuplicateException(
+            ResourceDuplicateException e,
+            WebRequest webRequest
+    ){
+        ExceptionResponse response = new ExceptionResponse(
+                e.getMessage(),
+                webRequest.getDescription(false),
+                "RESOURCE ALREADY EXISTS"
+        );
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
 }

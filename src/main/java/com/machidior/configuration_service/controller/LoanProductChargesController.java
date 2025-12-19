@@ -1,8 +1,11 @@
 package com.machidior.configuration_service.controller;
 
+import com.machidior.configuration_service.dtos.LoanProductChargesRequest;
 import com.machidior.configuration_service.enums.LoanProductType;
 import com.machidior.configuration_service.model.LoanProductCharges;
 import com.machidior.configuration_service.service.LoanProductChargesService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,22 +13,34 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/loan-product-charges")
+@RequiredArgsConstructor
 public class LoanProductChargesController {
 
     private final LoanProductChargesService service;
 
-    public LoanProductChargesController(LoanProductChargesService service) {
-        this.service = service;
-    }
-
     @PostMapping
-    public ResponseEntity<LoanProductCharges> createOrUpdate(@RequestBody LoanProductCharges charges) {
-        return ResponseEntity.ok(service.createOrUpdateCharges(charges));
+    public ResponseEntity<LoanProductCharges> createLoanCharges(
+            @RequestBody @Valid LoanProductChargesRequest request) {
+        return ResponseEntity.ok(service.createLoanCharges(request));
     }
 
-    @GetMapping("/type/{type}")
-    public ResponseEntity<LoanProductCharges> getByProductType(@PathVariable LoanProductType type) {
-        return ResponseEntity.ok(service.getChargesByProductType(type));
+    @GetMapping("/product-id/{productId}")
+    public ResponseEntity<LoanProductCharges> getLoanProductChargesByProductId(
+            @PathVariable Long productId) {
+        return ResponseEntity.ok(service.getLoanProductChargesByProductId(productId));
+    }
+
+    @GetMapping("/product-type/{productType}")
+    public ResponseEntity<LoanProductCharges> getLoanProductChargesByProductType(
+            @PathVariable LoanProductType productType){
+        return ResponseEntity.ok(service.getLoanProductChargesByProductType(productType));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<LoanProductCharges> updateProductCharges(
+            @PathVariable Long id,
+            @RequestBody @Valid LoanProductChargesRequest request){
+        return ResponseEntity.ok(service.updateProductCharges(id, request));
     }
 
     @GetMapping
@@ -34,7 +49,8 @@ public class LoanProductChargesController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCharges(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCharges(
+            @PathVariable Long id) {
         service.deleteCharges(id);
         return ResponseEntity.noContent().build();
     }

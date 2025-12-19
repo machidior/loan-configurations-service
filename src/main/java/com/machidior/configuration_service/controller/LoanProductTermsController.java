@@ -1,8 +1,11 @@
 package com.machidior.configuration_service.controller;
 
+import com.machidior.configuration_service.dtos.LoanProductTermsRequest;
 import com.machidior.configuration_service.enums.LoanProductType;
 import com.machidior.configuration_service.model.LoanProductTerms;
 import com.machidior.configuration_service.service.LoanProductTermsService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,28 +14,28 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/loan-product-terms")
+@RequiredArgsConstructor
 public class LoanProductTermsController {
 
     private final LoanProductTermsService service;
 
-    public LoanProductTermsController(LoanProductTermsService service) {
-        this.service = service;
-    }
-
     @PostMapping
-    public ResponseEntity<LoanProductTerms> createTerms(@RequestBody LoanProductTerms terms) {
-        return ResponseEntity.ok(service.createOrUpdateTerms(terms));
+    public ResponseEntity<LoanProductTerms> createTerms(
+            @RequestBody @Valid LoanProductTermsRequest request) {
+        return ResponseEntity.ok(service.createLoanProductTerms(request));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<LoanProductTerms> updateTerms(@PathVariable Long id,
-                                                        @RequestBody LoanProductTerms updatedTerms) {
-        return ResponseEntity.ok(service.updateTerms(id, updatedTerms));
+    @PutMapping("/update/{id}")
+    public ResponseEntity<LoanProductTerms> updateTerms(
+            @PathVariable Long id,
+            @RequestBody @Valid LoanProductTermsRequest request) {
+        return ResponseEntity.ok(service.updateTerms(id, request));
     }
 
     @GetMapping("/type/{type}")
-    public ResponseEntity<LoanProductTerms> getTermsByProductType(@PathVariable LoanProductType type) {
-        return ResponseEntity.ok(service.getTermsByProduct(type));
+    public ResponseEntity<LoanProductTerms> getTermsByProductType(
+            @PathVariable LoanProductType type) {
+        return ResponseEntity.ok(service.getTermsByProductType(type));
     }
 
     @GetMapping
@@ -41,7 +44,8 @@ public class LoanProductTermsController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTerms(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTerms(
+            @PathVariable Long id) {
         service.deleteTerms(id);
         return ResponseEntity.noContent().build();
     }

@@ -1,6 +1,5 @@
 package com.machidior.configuration_service.dtos;
 
-import com.machidior.configuration_service.enums.PenaltyCalculationType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -12,7 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LoanProductPenaltiesRequest {
+public class PenaltyPolicyRequest {
 
     @NotNull(message = "Loan product is not specified.")
     private Long productId;
@@ -22,5 +21,5 @@ public class LoanProductPenaltiesRequest {
     @NotNull(message = "Grace period days in null")
     private Integer gracePeriodDays;
     @NotNull(message = "Penalty method type must be provided.")
-    private PenaltyCalculationType calculationType;
+    private String calculationType;
 }
