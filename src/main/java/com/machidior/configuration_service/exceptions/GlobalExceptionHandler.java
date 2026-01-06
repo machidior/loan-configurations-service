@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
         ExceptionResponse response = new ExceptionResponse(
                 e.getMessage(),
                 webRequest.getDescription(false),
-                "INVALID ENUM"
+                "INVALID ENUM PROVIDED"
         );
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

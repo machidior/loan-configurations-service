@@ -1,10 +1,12 @@
 package com.machidior.configuration_service.model;
 
-import com.machidior.configuration_service.enums.PenaltyCalculationType;
+import com.machidior.configuration_service.enums.PenaltyCalculationMethod;
+import com.machidior.configuration_service.enums.PenaltyFrequency;
+import com.machidior.configuration_service.enums.PenaltyType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,16 +23,33 @@ public class PenaltyPolicy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private LoanProduct loanProduct;
-    private BigDecimal latePenaltyRate;
-    private Integer gracePeriodDays;
-    @Enumerated(EnumType.STRING)
-    private PenaltyCalculationType calculationType;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @OneToOne(optional = false)
+    private LoanProductVersion productVersion;
+
+    @Column(nullable = false)
+    private Integer graceDaysAfterDueDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PenaltyType penaltyType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PenaltyCalculationMethod calculationMethod;
+
+    private BigDecimal fixedAmount;
+
+    private BigDecimal percentage;
+
+    private BigDecimal maxPenaltyAmount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PenaltyFrequency frequency;
+
+    private Boolean compoundPenalty = false;
+
+    private Integer maxPenaltyDays;
+
 }

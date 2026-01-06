@@ -1,6 +1,8 @@
 package com.machidior.configuration_service.mapper;
 
 import com.machidior.configuration_service.dtos.LoanProductRequest;
+import com.machidior.configuration_service.dtos.LoanProductResponse;
+import com.machidior.configuration_service.enums.LoanProductCategory;
 import com.machidior.configuration_service.enums.LoanProductType;
 import com.machidior.configuration_service.exceptions.InvalidEnumException;
 import com.machidior.configuration_service.model.LoanProduct;
@@ -9,20 +11,43 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoanProductMapper {
 
-    public LoanProduct toEntity(LoanProductRequest request){
+    public LoanProduct toEntity(LoanProductRequest request) {
         return LoanProduct.builder()
-                .productType(parseProductType(request.getProductType()))
+                .productType(parseLoanProductType(request.getProductType()))
                 .name(request.getName())
+                .code(request.getCode())
                 .description(request.getDescription())
-                .active(true)
+                .category(parseLoanProductCategory(request.getCategory()))
                 .build();
     }
 
-    private LoanProductType parseProductType(String productType){
+    public LoanProductResponse toResponse(LoanProduct product) {
+        return LoanProductResponse.builder()
+                .id(product.getId())
+                .productType(product.getProductType())
+                .name(product.getName())
+                .code(product.getCode())
+                .description(product.getDescription())
+                .category(product.getCategory())
+                .active(product.getActive())
+                .createdAt(product.getCreatedAt())
+                .updatedAt(product.getUpdatedAt())
+                .build();
+    }
+
+    private LoanProductType parseLoanProductType(String productType) {
         try {
-            return productType != null? LoanProductType.valueOf(productType):null;
-        } catch (InvalidEnumException e){
-            throw new InvalidEnumException("Invalid Loan product type: " + productType);
+            return productType != null ? LoanProductType.valueOf(productType): null;
+        } catch (InvalidEnumException e) {
+            throw new InvalidEnumException("Invalid Loan Product Type Provided: " +productType);
+        }
+    }
+
+    private LoanProductCategory parseLoanProductCategory(String category) {
+        try {
+            return category != null ? LoanProductCategory.valueOf(category): null;
+        } catch (InvalidEnumException e) {
+            throw new InvalidEnumException("Invalid Loan product category provided: " +category);
         }
     }
 }

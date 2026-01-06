@@ -1,0 +1,41 @@
+package com.machidior.configuration_service.model;
+
+
+import com.machidior.configuration_service.enums.RequirementType;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+
+@Entity
+@Table
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class GuarantorRequirement {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private LoanProductVersion productVersion;
+
+    @Enumerated(EnumType.STRING)
+    private RequirementType type;
+
+    private Boolean enabled;
+
+    private Boolean mandatory;
+
+    private Integer minGuarantors;
+    private Integer maxGuarantors;
+
+    private Boolean guarantorIncomeProofRequired;
+    private Boolean guarantorEmploymentRequired;
+    private Boolean guarantorRelationRequired;
+
+    private BigDecimal minGuarantorIncome;
+}
