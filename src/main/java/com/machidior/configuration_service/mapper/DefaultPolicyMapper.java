@@ -1,9 +1,9 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.DefaultPolicyRequest;
-import com.machidior.configuration_service.dtos.DefaultPolicyResponse;
-import com.machidior.configuration_service.model.DefaultPolicy;
-import com.machidior.configuration_service.model.LoanProductVersion;
+import com.machidior.configuration_service.dtos.request.policy.DefaultPolicyRequest;
+import com.machidior.configuration_service.dtos.response.policy.DefaultPolicyResponse;
+import com.machidior.configuration_service.product.policy.DefaultPolicy;
+import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.stereotype.Component;
 
 @Component

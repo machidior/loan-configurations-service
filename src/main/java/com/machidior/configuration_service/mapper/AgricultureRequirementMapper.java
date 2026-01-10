@@ -1,10 +1,10 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.AgricultureRequirementRequest;
-import com.machidior.configuration_service.dtos.AgricultureRequirementResponse;
+import com.machidior.configuration_service.dtos.request.requirement.AgricultureRequirementRequest;
+import com.machidior.configuration_service.dtos.response.requirement.AgricultureRequirementResponse;
 import com.machidior.configuration_service.enums.RequirementType;
-import com.machidior.configuration_service.model.AgricultureRequirement;
-import com.machidior.configuration_service.model.LoanProductVersion;
+import com.machidior.configuration_service.product.requirement.AgricultureRequirement;
+import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.stereotype.Component;
 
 @Component

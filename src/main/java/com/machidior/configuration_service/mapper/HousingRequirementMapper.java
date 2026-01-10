@@ -1,10 +1,10 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.HousingRequirementRequest;
-import com.machidior.configuration_service.dtos.HousingRequirementResponse;
+import com.machidior.configuration_service.dtos.request.requirement.HousingRequirementRequest;
+import com.machidior.configuration_service.dtos.response.requirement.HousingRequirementResponse;
 import com.machidior.configuration_service.enums.RequirementType;
-import com.machidior.configuration_service.model.HousingRequirement;
-import com.machidior.configuration_service.model.LoanProductVersion;
+import com.machidior.configuration_service.product.requirement.HousingRequirement;
+import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.stereotype.Component;
 
 @Component

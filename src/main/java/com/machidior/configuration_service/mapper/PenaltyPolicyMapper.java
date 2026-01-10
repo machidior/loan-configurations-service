@@ -1,13 +1,13 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.PenaltyPolicyRequest;
-import com.machidior.configuration_service.dtos.PenaltyPolicyResponse;
+import com.machidior.configuration_service.dtos.request.policy.PenaltyPolicyRequest;
+import com.machidior.configuration_service.dtos.response.policy.PenaltyPolicyResponse;
 import com.machidior.configuration_service.enums.PenaltyCalculationMethod;
 import com.machidior.configuration_service.enums.PenaltyFrequency;
 import com.machidior.configuration_service.enums.PenaltyType;
 import com.machidior.configuration_service.exceptions.InvalidEnumException;
-import com.machidior.configuration_service.model.LoanProductVersion;
-import com.machidior.configuration_service.model.PenaltyPolicy;
+import com.machidior.configuration_service.product.LoanProductVersion;
+import com.machidior.configuration_service.product.policy.PenaltyPolicy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -45,7 +45,7 @@ public class PenaltyPolicyMapper {
 
     private PenaltyType parsePenaltyType(String type) {
         try {
-            return type != null ? PenaltyType.valueOf(type):null;
+            return type != null ? PenaltyType.valueOf(type.toUpperCase()):null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid penalty type provided: " +type);
         }
@@ -53,7 +53,7 @@ public class PenaltyPolicyMapper {
 
     private PenaltyCalculationMethod parseCalculationMethod(String calculationMethod) {
         try {
-            return calculationMethod != null ? PenaltyCalculationMethod.valueOf(calculationMethod): null;
+            return calculationMethod != null ? PenaltyCalculationMethod.valueOf(calculationMethod.toUpperCase()): null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid penalty calculation method provided: " +calculationMethod);
         }
@@ -61,7 +61,7 @@ public class PenaltyPolicyMapper {
 
     private PenaltyFrequency parsepenaltyFrequency(String frequency) {
         try {
-            return frequency != null ? PenaltyFrequency.valueOf(frequency):null;
+            return frequency != null ? PenaltyFrequency.valueOf(frequency.toUpperCase()):null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid penalty frequency provided: " + frequency);
         }

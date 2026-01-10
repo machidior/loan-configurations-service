@@ -1,10 +1,10 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.DigitalConsentRequirementRequest;
-import com.machidior.configuration_service.dtos.DigitalConsentRequirementResponse;
+import com.machidior.configuration_service.dtos.request.requirement.DigitalConsentRequirementRequest;
+import com.machidior.configuration_service.dtos.response.requirement.DigitalConsentRequirementResponse;
 import com.machidior.configuration_service.enums.RequirementType;
-import com.machidior.configuration_service.model.DigitalConsentRequirement;
-import com.machidior.configuration_service.model.LoanProductVersion;
+import com.machidior.configuration_service.product.requirement.DigitalConsentRequirement;
+import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,13 +1,13 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.InterestPolicyRequest;
-import com.machidior.configuration_service.dtos.InterestPolicyResponse;
+import com.machidior.configuration_service.dtos.request.policy.InterestPolicyRequest;
+import com.machidior.configuration_service.dtos.response.policy.InterestPolicyResponse;
 import com.machidior.configuration_service.enums.DayCountConversion;
 import com.machidior.configuration_service.enums.InterestAccrualMethod;
 import com.machidior.configuration_service.enums.InterestType;
 import com.machidior.configuration_service.exceptions.InvalidEnumException;
-import com.machidior.configuration_service.model.InterestPolicy;
-import com.machidior.configuration_service.model.LoanProductVersion;
+import com.machidior.configuration_service.product.policy.InterestPolicy;
+import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -45,7 +45,7 @@ public class InterestPolicyMapper {
 
     private InterestType parseInterestType(String interestType) {
         try {
-            return interestType != null ? InterestType.valueOf(interestType):null;
+            return interestType != null ? InterestType.valueOf(interestType.toUpperCase()):null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid Installment Status provided: " +interestType);
         }
@@ -53,7 +53,7 @@ public class InterestPolicyMapper {
 
     private InterestAccrualMethod parseInterestAccrualMethod(String accrualMethod) {
         try {
-            return accrualMethod != null ? InterestAccrualMethod.valueOf(accrualMethod):null;
+            return accrualMethod != null ? InterestAccrualMethod.valueOf(accrualMethod.toUpperCase()):null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid Interest Accrual method provided: " +accrualMethod);
         }
@@ -61,7 +61,7 @@ public class InterestPolicyMapper {
 
     private DayCountConversion parseDayCountConversion( String dayCountConversion) {
         try {
-            return dayCountConversion != null ? DayCountConversion.valueOf(dayCountConversion):null;
+            return dayCountConversion != null ? DayCountConversion.valueOf(dayCountConversion.toUpperCase()):null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid day count conversion provided: " +dayCountConversion);
         }

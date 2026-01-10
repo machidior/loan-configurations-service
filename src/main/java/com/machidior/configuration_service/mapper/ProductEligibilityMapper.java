@@ -1,14 +1,15 @@
 package com.machidior.configuration_service.mapper;
 
 
-import com.machidior.configuration_service.dtos.ProductEligibilityRequest;
-import com.machidior.configuration_service.dtos.ProductEligibilityResponse;
+import com.machidior.configuration_service.dtos.request.policy.ProductEligibilityRequest;
+import com.machidior.configuration_service.dtos.response.policy.ProductEligibilityResponse;
 import com.machidior.configuration_service.enums.ClientType;
 import com.machidior.configuration_service.exceptions.InvalidEnumException;
-import com.machidior.configuration_service.model.LoanProductVersion;
-import com.machidior.configuration_service.model.ProductEligibility;
+import com.machidior.configuration_service.product.LoanProductVersion;
+import com.machidior.configuration_service.product.policy.ProductEligibility;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -45,17 +46,23 @@ public class ProductEligibilityMapper {
     }
 
     private List<ClientType> parseClientType(List<String> clientTypes) {
-        if (!clientTypes.isEmpty()) {
-            List<ClientType> parsedClientTypes = null;
-            for (String type: clientTypes) {
-                try {
-                    parsedClientTypes.add(ClientType.valueOf(type.toUpperCase()));
-                } catch (InvalidEnumException e) {
-                    throw new InvalidEnumException("Invalid client type: " + type);
-                }
-            }
-            return parsedClientTypes;
+        if (clientTypes == null || clientTypes.isEmpty()) {
+            return List.of(); // or Collections.emptyList()
         }
-        return null;
+
+        List<ClientType> parsedClientTypes = new ArrayList<>();
+
+        for (String type : clientTypes) {
+            try {
+                parsedClientTypes.add(
+                        ClientType.valueOf(type.trim().toUpperCase())
+                );
+            } catch (IllegalArgumentException ex) {
+                throw new InvalidEnumException("Invalid client type: " + type);
+            }
+        }
+
+        return parsedClientTypes;
     }
+
 }

@@ -1,10 +1,10 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.GuaranteeRequirementRequest;
-import com.machidior.configuration_service.dtos.GuaranteeRequirementResponse;
+import com.machidior.configuration_service.dtos.request.requirement.GuaranteeRequirementRequest;
+import com.machidior.configuration_service.dtos.response.requirement.GuaranteeRequirementResponse;
 import com.machidior.configuration_service.enums.RequirementType;
-import com.machidior.configuration_service.model.GuarantorRequirement;
-import com.machidior.configuration_service.model.LoanProductVersion;
+import com.machidior.configuration_service.product.requirement.GuarantorRequirement;
+import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.stereotype.Component;
 
 @Component

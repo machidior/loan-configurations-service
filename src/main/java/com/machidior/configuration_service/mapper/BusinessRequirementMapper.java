@@ -1,10 +1,10 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.BusinessRequirementRequest;
-import com.machidior.configuration_service.dtos.BusinessRequirementResponse;
+import com.machidior.configuration_service.dtos.request.requirement.BusinessRequirementRequest;
+import com.machidior.configuration_service.dtos.response.requirement.BusinessRequirementResponse;
 import com.machidior.configuration_service.enums.RequirementType;
-import com.machidior.configuration_service.model.BusinessRequirement;
-import com.machidior.configuration_service.model.LoanProductVersion;
+import com.machidior.configuration_service.product.requirement.BusinessRequirement;
+import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.stereotype.Component;
 
 @Component

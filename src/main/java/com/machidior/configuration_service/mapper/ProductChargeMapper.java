@@ -1,14 +1,14 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.ProductChargeRequest;
-import com.machidior.configuration_service.dtos.ProductChargeResponse;
+import com.machidior.configuration_service.dtos.request.charges.ProductChargeRequest;
+import com.machidior.configuration_service.dtos.response.charges.ProductChargeResponse;
 import com.machidior.configuration_service.enums.ChargeCalculationMethod;
 import com.machidior.configuration_service.enums.ChargePayer;
 import com.machidior.configuration_service.enums.ChargeTrigger;
 import com.machidior.configuration_service.enums.ChargeType;
 import com.machidior.configuration_service.exceptions.InvalidEnumException;
-import com.machidior.configuration_service.model.LoanProductVersion;
-import com.machidior.configuration_service.model.ProductCharge;
+import com.machidior.configuration_service.product.LoanProductVersion;
+import com.machidior.configuration_service.product.charge.ProductCharge;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -52,7 +52,7 @@ public class ProductChargeMapper {
 
     private ChargeType parseChargeType(String type) {
         try {
-            return type != null? ChargeType.valueOf(type):null;
+            return type != null? ChargeType.valueOf(type.toUpperCase()):null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid charge type provided: " + type);
         }
@@ -60,7 +60,7 @@ public class ProductChargeMapper {
 
     private ChargeCalculationMethod parseChargeCalculationMethod(String method) {
         try {
-            return method != null? ChargeCalculationMethod.valueOf(method):null;
+            return method != null? ChargeCalculationMethod.valueOf(method.toUpperCase()):null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid charge calculation method provided: " +method);
         }
@@ -68,7 +68,7 @@ public class ProductChargeMapper {
 
     private ChargeTrigger parseChargeTrigger(String trigger) {
         try {
-            return trigger != null? ChargeTrigger.valueOf(trigger):null;
+            return trigger != null? ChargeTrigger.valueOf(trigger.toUpperCase()):null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid charge trigger provided: " + trigger);
         }
@@ -76,7 +76,7 @@ public class ProductChargeMapper {
 
     private ChargePayer parseChargePayer(String payer) {
         try {
-            return payer != null? ChargePayer.valueOf(payer):null;
+            return payer != null? ChargePayer.valueOf(payer.toUpperCase()):null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid charge payer provided: " +payer);
         }

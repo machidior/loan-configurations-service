@@ -1,10 +1,10 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.EducationRequirementRequest;
-import com.machidior.configuration_service.dtos.EducationRequirementResponse;
+import com.machidior.configuration_service.dtos.request.requirement.EducationRequirementRequest;
+import com.machidior.configuration_service.dtos.response.requirement.EducationRequirementResponse;
 import com.machidior.configuration_service.enums.RequirementType;
-import com.machidior.configuration_service.model.EducationRequirement;
-import com.machidior.configuration_service.model.LoanProductVersion;
+import com.machidior.configuration_service.product.requirement.EducationRequirement;
+import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.stereotype.Component;
 
 @Component

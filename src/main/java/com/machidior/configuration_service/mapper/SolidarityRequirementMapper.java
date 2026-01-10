@@ -1,10 +1,10 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.SolidarityRequirementRequest;
-import com.machidior.configuration_service.dtos.SolidarityRequirementResponse;
+import com.machidior.configuration_service.dtos.request.requirement.SolidarityRequirementRequest;
+import com.machidior.configuration_service.dtos.response.requirement.SolidarityRequirementResponse;
 import com.machidior.configuration_service.enums.RequirementType;
-import com.machidior.configuration_service.model.LoanProductVersion;
-import com.machidior.configuration_service.model.SolidarityRequirement;
+import com.machidior.configuration_service.product.LoanProductVersion;
+import com.machidior.configuration_service.product.requirement.SolidarityRequirement;
 import org.springframework.stereotype.Component;
 
 @Component

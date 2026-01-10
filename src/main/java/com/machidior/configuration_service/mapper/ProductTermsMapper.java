@@ -1,13 +1,13 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.ProductTermsRequest;
-import com.machidior.configuration_service.dtos.ProductTermsResponse;
+import com.machidior.configuration_service.dtos.request.policy.ProductTermsRequest;
+import com.machidior.configuration_service.dtos.response.policy.ProductTermsResponse;
 import com.machidior.configuration_service.enums.DisbursementMethod;
 import com.machidior.configuration_service.enums.InstallmentFrequency;
 import com.machidior.configuration_service.enums.TenureUnit;
 import com.machidior.configuration_service.exceptions.InvalidEnumException;
-import com.machidior.configuration_service.model.LoanProductVersion;
-import com.machidior.configuration_service.model.ProductTerms;
+import com.machidior.configuration_service.product.LoanProductVersion;
+import com.machidior.configuration_service.product.policy.ProductTerms;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -83,7 +83,7 @@ public class ProductTermsMapper {
 
     private TenureUnit parseTenureUnit(String unit) {
         try {
-            return unit != null? TenureUnit.valueOf(unit): null;
+            return unit != null? TenureUnit.valueOf(unit.toUpperCase()): null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid tenure unit provided: " + unit);
         }
@@ -91,7 +91,7 @@ public class ProductTermsMapper {
 
     private InstallmentFrequency parseInstallmentFrequency(String frequency) {
         try {
-            return frequency != null? InstallmentFrequency.valueOf(frequency): null;
+            return frequency != null? InstallmentFrequency.valueOf(frequency.toUpperCase()): null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid installment frequency provided: " + frequency);
         }
@@ -99,7 +99,7 @@ public class ProductTermsMapper {
 
     private DisbursementMethod parseDisbursementMethod(String method) {
         try {
-            return method != null? DisbursementMethod.valueOf(method): null;
+            return method != null? DisbursementMethod.valueOf(method.toUpperCase()): null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid disbursement method provided: " + method);
         }

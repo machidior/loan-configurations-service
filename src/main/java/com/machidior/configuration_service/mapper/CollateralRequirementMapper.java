@@ -1,14 +1,16 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.CollateralRequirementRequest;
-import com.machidior.configuration_service.dtos.CollateralRequirementResponse;
+import com.machidior.configuration_service.dtos.request.requirement.CollateralRequirementRequest;
+import com.machidior.configuration_service.dtos.response.requirement.CollateralRequirementResponse;
+import com.machidior.configuration_service.enums.ClientType;
 import com.machidior.configuration_service.enums.CollateralType;
 import com.machidior.configuration_service.enums.RequirementType;
 import com.machidior.configuration_service.exceptions.InvalidEnumException;
-import com.machidior.configuration_service.model.CollateralRequirement;
-import com.machidior.configuration_service.model.LoanProductVersion;
+import com.machidior.configuration_service.product.requirement.CollateralRequirement;
+import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -51,17 +53,22 @@ public class CollateralRequirementMapper {
     }
 
     private List<CollateralType> parseCollateralType(List<String> collateralTypes) {
-        if (!collateralTypes.isEmpty()) {
-            List<CollateralType> parsedCollateralTypes = null;
-            for (String type: collateralTypes) {
-                try {
-                     parsedCollateralTypes.add(CollateralType.valueOf(type.toUpperCase()));
-                } catch (InvalidEnumException e) {
-                    throw new InvalidEnumException("Invalid collateral type: " + type);
-                }
-            }
-            return parsedCollateralTypes;
+        if (collateralTypes == null || collateralTypes.isEmpty()) {
+            return List.of(); // or Collections.emptyList()
         }
-        return null;
+
+        List<CollateralType> parsedCollateralTypes = new ArrayList<>();
+
+        for (String type : collateralTypes) {
+            try {
+                parsedCollateralTypes.add(
+                        CollateralType.valueOf(type.trim().toUpperCase())
+                );
+            } catch (IllegalArgumentException ex) {
+                throw new InvalidEnumException("Invalid collateral type: " + type);
+            }
+        }
+
+        return parsedCollateralTypes;
     }
 }

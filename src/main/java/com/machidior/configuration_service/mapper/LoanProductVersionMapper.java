@@ -1,8 +1,7 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.LoanProductVersionRequest;
-import com.machidior.configuration_service.dtos.LoanProductVersionResponse;
-import com.machidior.configuration_service.model.LoanProductVersion;
+import com.machidior.configuration_service.dtos.response.LoanProductVersionResponse;
+import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +14,7 @@ public class LoanProductVersionMapper {
                 .version(productVersion.getVersion())
                 .locked(productVersion.getLocked())
                 .active(productVersion.getActive())
+                .status(productVersion.getStatus())
                 .description(productVersion.getDescription())
                 .effectiveFrom(productVersion.getEffectiveFrom())
                 .createdAt(productVersion.getCreatedAt())

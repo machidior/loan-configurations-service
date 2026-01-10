@@ -1,11 +1,11 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.LoanProductRequest;
-import com.machidior.configuration_service.dtos.LoanProductResponse;
+import com.machidior.configuration_service.dtos.request.LoanProductRequest;
+import com.machidior.configuration_service.dtos.response.LoanProductResponse;
 import com.machidior.configuration_service.enums.LoanProductCategory;
 import com.machidior.configuration_service.enums.LoanProductType;
 import com.machidior.configuration_service.exceptions.InvalidEnumException;
-import com.machidior.configuration_service.model.LoanProduct;
+import com.machidior.configuration_service.product.LoanProduct;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,7 +37,7 @@ public class LoanProductMapper {
 
     private LoanProductType parseLoanProductType(String productType) {
         try {
-            return productType != null ? LoanProductType.valueOf(productType): null;
+            return productType != null ? LoanProductType.valueOf(productType.toUpperCase()): null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid Loan Product Type Provided: " +productType);
         }
@@ -45,7 +45,7 @@ public class LoanProductMapper {
 
     private LoanProductCategory parseLoanProductCategory(String category) {
         try {
-            return category != null ? LoanProductCategory.valueOf(category): null;
+            return category != null ? LoanProductCategory.valueOf(category.toUpperCase()): null;
         } catch (InvalidEnumException e) {
             throw new InvalidEnumException("Invalid Loan product category provided: " +category);
         }

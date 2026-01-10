@@ -1,10 +1,10 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.FinancialHistoryRequirementRequest;
-import com.machidior.configuration_service.dtos.FinancialHistoryRequirementResponse;
+import com.machidior.configuration_service.dtos.request.requirement.FinancialHistoryRequirementRequest;
+import com.machidior.configuration_service.dtos.response.requirement.FinancialHistoryRequirementResponse;
 import com.machidior.configuration_service.enums.RequirementType;
-import com.machidior.configuration_service.model.FinancialHistoryRequirement;
-import com.machidior.configuration_service.model.LoanProductVersion;
+import com.machidior.configuration_service.product.requirement.FinancialHistoryRequirement;
+import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.stereotype.Component;
 
 @Component
