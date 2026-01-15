@@ -1,5 +1,6 @@
 package com.machidior.configuration_service.repository;
 
+import com.machidior.configuration_service.enums.ChargeTrigger;
 import com.machidior.configuration_service.product.charge.ProductCharge;
 import com.machidior.configuration_service.product.LoanProductVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,5 +17,7 @@ public interface ProductChargeRepository extends JpaRepository<ProductCharge, Lo
     void deleteByProductVersion(LoanProductVersion version);
 
     List<ProductCharge> findByProductVersionAndMandatory(LoanProductVersion version, boolean b);
+
+    List<ProductCharge> findByProductVersionAndTrigger(LoanProductVersion version, ChargeTrigger chargeTrigger);
 }
 

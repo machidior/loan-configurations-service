@@ -15,7 +15,7 @@ public class InterestPolicyRequest {
 
     private String interestType;
 
-    private BigDecimal annualInterestRate;
+    private BigDecimal monthlyInterestRate;
 
     private BigDecimal minInterestRate;
     private BigDecimal maxInterestRate;

@@ -2,8 +2,10 @@ package com.machidior.configuration_service.controller;
 
 import com.machidior.configuration_service.dtos.request.ApproveVersionRequest;
 import com.machidior.configuration_service.dtos.request.LoanProductVersionRequest;
+import com.machidior.configuration_service.dtos.response.ActiveProductVersionBasicDetails;
 import com.machidior.configuration_service.dtos.response.LoanProductVersionResponse;
 import com.machidior.configuration_service.service.LoanProductVersionService;
+import com.machidior.configuration_service.service.ProductVersionCloneService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class LoanProductVersionController {
     private final LoanProductVersionService productVersionService;
+    private final ProductVersionCloneService productVersionCloneService;
 
     @PutMapping("/{versionId}")
     public ResponseEntity<LoanProductVersionResponse> updateVersion(@RequestBody LoanProductVersionRequest request,
@@ -35,6 +38,7 @@ public class LoanProductVersionController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/{versionId}/archive")
     public ResponseEntity<LoanProductVersionResponse> archiveVersion(@PathVariable Long versionId) {
         String archivedBy = "system"; // BUG: retrieve this from the authenticated user context
         LoanProductVersionResponse response = productVersionService.archiveVersion(versionId, archivedBy);
@@ -56,6 +60,24 @@ public class LoanProductVersionController {
     @GetMapping("/{versionId}")
     public ResponseEntity<LoanProductVersionResponse> getVersionById(@PathVariable Long versionId) {
         LoanProductVersionResponse response = productVersionService.getVersionById(versionId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/activate/{versionId}")
+    public ResponseEntity<LoanProductVersionResponse> activateVersion(@PathVariable Long versionId) {
+        LoanProductVersionResponse response = productVersionService.activateVersion(versionId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/active/{productId}/basic-details")
+    public ResponseEntity<ActiveProductVersionBasicDetails> getActiveVersionBasicDetails(@PathVariable Long productId) {
+        ActiveProductVersionBasicDetails response = productVersionService.getActiveVersionBasicDetails(productId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/clone/{versionId}")
+    public ResponseEntity<LoanProductVersionResponse> cloneProductVersion(@PathVariable Long versionId) {
+        LoanProductVersionResponse response = productVersionCloneService.cloneVersion(versionId);
         return ResponseEntity.ok(response);
     }
 }

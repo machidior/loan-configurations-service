@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class LoanProductServiceImpl implements LoanProductService {
 
     private final LoanProductRepository productRepository;
-//    @Lazy
     private final LoanProductVersionService versionService;
 //    private final SequenceGenerator sequenceGenerator;
     private final LoanProductMapper mapper;
@@ -38,6 +37,7 @@ public class LoanProductServiceImpl implements LoanProductService {
         }
 
         LoanProduct product = mapper.toEntity(request);
+        product.setActive(true);
 
         LoanProduct savedProduct = productRepository.save(product);
         log.debug("Product saved with ID: {}", savedProduct.getId());

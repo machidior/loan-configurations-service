@@ -6,6 +6,7 @@ import com.machidior.configuration_service.enums.TenureUnit;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,7 +29,7 @@ public class ProductTermsResponse {
 
     private TenureUnit tenureUnit;
 
-    private InstallmentFrequency installmentFrequency;
+    private List<InstallmentFrequency> allowedInstallmentFrequencies;
 
     private Integer minInstallments;
     private Integer maxInstallments;

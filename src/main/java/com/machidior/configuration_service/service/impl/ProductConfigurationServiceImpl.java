@@ -7,11 +7,9 @@ import com.machidior.configuration_service.dtos.response.ConfigurationsResponse;
 import com.machidior.configuration_service.dtos.response.charges.ProductChargeResponse;
 import com.machidior.configuration_service.dtos.response.policy.PoliciesResponse;
 import com.machidior.configuration_service.dtos.response.requirement.RequirementsResponse;
-import com.machidior.configuration_service.enums.DisbursementMethod;
-import com.machidior.configuration_service.enums.InstallmentFrequency;
-import com.machidior.configuration_service.enums.TenureUnit;
-import com.machidior.configuration_service.enums.VersionStatus;
+import com.machidior.configuration_service.enums.*;
 import com.machidior.configuration_service.exceptions.ImmutableVersionException;
+import com.machidior.configuration_service.exceptions.InvalidEnumException;
 import com.machidior.configuration_service.exceptions.ResourceNotFoundException;
 import com.machidior.configuration_service.mapper.*;
 import com.machidior.configuration_service.product.charge.ProductCharge;
@@ -20,11 +18,12 @@ import com.machidior.configuration_service.product.LoanProductVersion;
 import com.machidior.configuration_service.repository.LoanProductVersionRepository;
 import com.machidior.configuration_service.repository.*;
 import com.machidior.configuration_service.service.ProductConfigurationService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -109,8 +108,7 @@ public class ProductConfigurationServiceImpl implements ProductConfigurationServ
             terms.setMaxTenure(policies.getTermsPolicy().getMaxTenure());
             terms.setTenureUnit(policies.getTermsPolicy().getTenureUnit() != null ?
                     TenureUnit.valueOf(policies.getTermsPolicy().getTenureUnit()) : terms.getTenureUnit());
-            terms.setInstallmentFrequency(policies.getTermsPolicy().getInstallmentFrequency() != null ?
-                    InstallmentFrequency.valueOf(policies.getTermsPolicy().getInstallmentFrequency()) : terms.getInstallmentFrequency());
+            terms.setAllowedInstallmentFrequencies(parseAllowedInstallmentFrequencies(policies.getTermsPolicy().getAllowedInstallmentFrequencies()));
             terms.setMinInstallments(policies.getTermsPolicy().getMinInstallments());
             terms.setMaxInstallments(policies.getTermsPolicy().getMaxInstallments());
             terms.setRepaymentDayOfTheMonth(policies.getTermsPolicy().getRepaymentDayOfTheMonth());
@@ -142,7 +140,7 @@ public class ProductConfigurationServiceImpl implements ProductConfigurationServ
             InterestPolicy updatedPolicy = interestPolicyMapper.toEntity(policies.getInterestPolicy(), version);
             policy.setProductVersion(updatedPolicy.getProductVersion());
             policy.setInterestType(updatedPolicy.getInterestType());
-            policy.setAnnualInterestRate(updatedPolicy.getAnnualInterestRate());
+            policy.setMonthlyInterestRate(updatedPolicy.getMonthlyInterestRate());
             policy.setMinInterestRate(updatedPolicy.getMinInterestRate());
             policy.setMaxInterestRate(updatedPolicy.getMaxInterestRate());
             policy.setAllowedRateOverride(updatedPolicy.getAllowedRateOverride());
@@ -195,6 +193,26 @@ public class ProductConfigurationServiceImpl implements ProductConfigurationServ
         response.setEligibilityPolicy(eligibilityPolicy != null ? productEligibilityMapper.toResponse(eligibilityPolicy) : null);
         log.debug("All policies updated for version {}", versionId);
         return response;
+    }
+
+    private List<InstallmentFrequency> parseAllowedInstallmentFrequencies(List<String> installmentFrequencies) {
+        if (installmentFrequencies == null || installmentFrequencies.isEmpty()) {
+            return List.of();
+        }
+
+        List<InstallmentFrequency> parsedInstallmentFrequencies = new ArrayList<>();
+
+        for (String frequency : installmentFrequencies) {
+            try {
+                parsedInstallmentFrequencies.add(
+                        InstallmentFrequency.valueOf(frequency.trim().toUpperCase())
+                );
+            } catch (IllegalArgumentException ex) {
+                throw new InvalidEnumException("Invalid installment frequency: " + frequency);
+            }
+        }
+
+        return parsedInstallmentFrequencies;
     }
 
     @Override
@@ -302,16 +320,16 @@ public class ProductConfigurationServiceImpl implements ProductConfigurationServ
             existing.setInsuranceRequired(updated.getInsuranceRequired());
             existing.setValuationRequired(updated.getValuationRequired());
             existing.setPhotoRequired(updated.getPhotoRequired());
-            existing.setMinAverageMonthlyTurnOver(updated.getMinAverageMonthlyTurnOver());
+            existing.setMinLoanAmountToValueRatio(updated.getMinLoanAmountToValueRatio());
 
             var saved = collateralRequirementRepository.save(existing);
             response.setCollateralRequirement(collateralRequirementMapper.toResponse(saved));
         }
 
-        if (requirements.getGuaranteeRequirement() != null) {
+        if (requirements.getGuarantorRequirement() != null) {
             var existing = guarantorRequirementRepository.findByProductVersion(version)
                     .stream().findFirst().orElse(new com.machidior.configuration_service.product.requirement.GuarantorRequirement());
-            var updated = guarantorRequirementMapper.toEntity(requirements.getGuaranteeRequirement(), version);
+            var updated = guarantorRequirementMapper.toEntity(requirements.getGuarantorRequirement(), version);
 
             existing.setProductVersion(updated.getProductVersion());
             existing.setType(updated.getType());
@@ -322,10 +340,13 @@ public class ProductConfigurationServiceImpl implements ProductConfigurationServ
             existing.setGuarantorIncomeProofRequired(updated.getGuarantorIncomeProofRequired());
             existing.setGuarantorEmploymentRequired(updated.getGuarantorEmploymentRequired());
             existing.setGuarantorRelationRequired(updated.getGuarantorRelationRequired());
+            existing.setPassportPhotoRequired(updated.getPassportPhotoRequired());
+            existing.setIdDocumentRequired(updated.getIdDocumentRequired());
+            existing.setGuarantorConsentRequired(updated.getGuarantorConsentRequired());
             existing.setMinGuarantorIncome(updated.getMinGuarantorIncome());
 
             var saved = guarantorRequirementRepository.save(existing);
-            response.setGuaranteeRequirement(guarantorRequirementMapper.toResponse(saved));
+            response.setGuarantorRequirement(guarantorRequirementMapper.toResponse(saved));
         }
 
         if (requirements.getEmploymentRequirement() != null) {
@@ -360,7 +381,6 @@ public class ProductConfigurationServiceImpl implements ProductConfigurationServ
             existing.setRegistrationRequired(updated.getRegistrationRequired());
             existing.setBusinessLicenseRequired(updated.getBusinessLicenseRequired());
             existing.setCashFlowStatementRequired(updated.getCashFlowStatementRequired());
-            existing.setBankStatementRequired(updated.getBankStatementRequired());
             existing.setTinCertificateRequired(updated.getTinCertificateRequired());
             existing.setTinNumberRequired(updated.getTinNumberRequired());
             existing.setInsuranceComprehensiveCoverRequired(updated.getInsuranceComprehensiveCoverRequired());
@@ -532,7 +552,7 @@ public class ProductConfigurationServiceImpl implements ProductConfigurationServ
         guarantorRequirementRepository.findByProductVersion(version)
                 .stream()
                 .findFirst()
-                .ifPresent(r -> requirements.setGuaranteeRequirement(guarantorRequirementMapper.toResponse(r)));
+                .ifPresent(r -> requirements.setGuarantorRequirement(guarantorRequirementMapper.toResponse(r)));
 
         employmentRequirementRepository.findByProductVersion(version)
                 .stream()
@@ -570,5 +590,112 @@ public class ProductConfigurationServiceImpl implements ProductConfigurationServ
                 .ifPresent(r -> requirements.setSolidarityRequirement(solidarityRequirementMapper.toResponse(r)));
 
         return requirements;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public RequirementsResponse getVersionRequirements(Long versionId) {
+        LoanProductVersion version = versionRepository.findById(versionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Version not found with ID: " + versionId));
+
+        RequirementsResponse requirements = new RequirementsResponse();
+
+        agricultureRequirementRepository.findByProductVersion(version)
+                .stream()
+                .findFirst()
+                .ifPresent(r -> requirements.setAgricultureRequirement(agricultureRequirementMapper.toResponse(r)));
+
+        assetRequirementRepository.findByProductVersion(version)
+                .stream()
+                .findFirst()
+                .ifPresent(r -> requirements.setAssetRequirement(assetRequirementMapper.toResponse(r)));
+
+        collateralRequirementRepository.findByProductVersion(version)
+                .stream()
+                .findFirst()
+                .ifPresent(r -> requirements.setCollateralRequirement(collateralRequirementMapper.toResponse(r)));
+
+        guarantorRequirementRepository.findByProductVersion(version)
+                .stream()
+                .findFirst()
+                .ifPresent(r -> requirements.setGuarantorRequirement(guarantorRequirementMapper.toResponse(r)));
+
+        employmentRequirementRepository.findByProductVersion(version)
+                .stream()
+                .findFirst()
+                .ifPresent(r -> requirements.setEmploymentRequirement(employmentRequirementMapper.toResponse(r)));
+
+        businessRequirementRepository.findByProductVersion(version)
+                .stream()
+                .findFirst()
+                .ifPresent(r -> requirements.setBusinessRequirement(businessRequirementMapper.toResponse(r)));
+
+        digitalConsentRequirementRepository.findByProductVersion(version)
+                .stream()
+                .findFirst()
+                .ifPresent(r -> requirements.setDigitalConsentRequirement(digitalConsentRequirementMapper.toResponse(r)));
+
+        educationRequirementRepository.findByProductVersion(version)
+                .stream()
+                .findFirst()
+                .ifPresent(r -> requirements.setEducationRequirement(educationRequirementMapper.toResponse(r)));
+
+        financialHistoryRequirementRepository.findByProductVersion(version)
+                .stream()
+                .findFirst()
+                .ifPresent(r -> requirements.setFinancialHistoryRequirement(financialHistoryRequirementMapper.toResponse(r)));
+
+        housingRequirementRepository.findByProductVersion(version)
+                .stream()
+                .findFirst()
+                .ifPresent(r -> requirements.setHousingRequirement(housingRequirementMapper.toResponse(r)));
+
+        solidarityRequirementRepository.findByProductVersion(version)
+                .stream()
+                .findFirst()
+                .ifPresent(r -> requirements.setSolidarityRequirement(solidarityRequirementMapper.toResponse(r)));
+
+        return requirements;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public PoliciesResponse getVersionPolicies(Long versionId) {
+        LoanProductVersion version = versionRepository.findById(versionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Version not found with ID: " + versionId));
+
+        PoliciesResponse policies = new PoliciesResponse();
+
+        defaultPolicyRepository.findByProductVersion(version)
+                .ifPresent(policy -> policies.setDefaultPolicy(defaultPolicyMapper.toResponse(policy)));
+
+        termsPolicyRepository.findByProductVersion(version)
+                .ifPresent(policy -> policies.setTermsPolicy(termsPolicyMapper.toResponse(policy)));
+
+        interestPolicyRepository.findByProductVersion(version)
+                .ifPresent(policy -> policies.setInterestPolicy(interestPolicyMapper.toResponse(policy)));
+
+        penaltyPolicyRepository.findByProductVersion(version)
+                .ifPresent(policy -> policies.setPenaltyPolicy(penaltyPolicyMapper.toResponse(policy)));
+
+        eligibilityPolicyRepository.findByProductVersion(version)
+                .ifPresent(policy -> policies.setEligibilityPolicy(productEligibilityMapper.toResponse(policy)));
+
+        return policies;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ProductChargeResponse> getOnApplicationCharges(Long versionId) {
+        log.debug("Getting on-application charges for version: {}", versionId);
+
+        LoanProductVersion version = versionRepository.findById(versionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Version not found with ID: " + versionId));
+
+        List<ProductCharge> charges = chargeRepository.findByProductVersionAndTrigger(version, ChargeTrigger.ON_APPLICATION);
+
+        return charges.stream()
+                .map(chargeMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }

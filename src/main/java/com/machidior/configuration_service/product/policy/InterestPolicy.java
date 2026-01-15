@@ -30,7 +30,7 @@ public class InterestPolicy {
     private InterestType interestType;
 
     @Column(nullable = false)
-    private BigDecimal annualInterestRate;
+    private BigDecimal monthlyInterestRate;
 
     private BigDecimal minInterestRate;
     private BigDecimal maxInterestRate;

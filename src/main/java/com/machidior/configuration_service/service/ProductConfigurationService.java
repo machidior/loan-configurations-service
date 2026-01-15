@@ -7,6 +7,7 @@ import com.machidior.configuration_service.dtos.response.ConfigurationsResponse;
 import com.machidior.configuration_service.dtos.response.charges.ProductChargeResponse;
 import com.machidior.configuration_service.dtos.response.policy.PoliciesResponse;
 import com.machidior.configuration_service.dtos.response.requirement.RequirementsResponse;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,4 +19,12 @@ public interface ProductConfigurationService {
     RequirementsResponse updateRequirements(Long versionId, RequirementsRequests requirements);
 
     ConfigurationsResponse getFullConfiguration(Long versionId);
+
+    RequirementsResponse getVersionRequirements(Long versionId);
+
+    @Transactional(readOnly = true)
+    PoliciesResponse getVersionPolicies(Long versionId);
+
+    @Transactional(readOnly = true)
+    List<ProductChargeResponse> getOnApplicationCharges(Long versionId);
 }

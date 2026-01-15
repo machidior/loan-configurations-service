@@ -45,6 +45,6 @@ public class CollateralRequirement {
     private Boolean valuationRequired;
     private Boolean photoRequired;
 
-    private BigDecimal minAverageMonthlyTurnOver;
+    private BigDecimal minLoanAmountToValueRatio;
 
 }

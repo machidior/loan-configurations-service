@@ -15,7 +15,7 @@ public class RequirementsResponse {
     private CollateralRequirementResponse collateralRequirement;
     private DigitalConsentRequirementResponse digitalConsentRequirement;
     private EmploymentRequirementResponse employmentRequirement;
-    private GuaranteeRequirementResponse guaranteeRequirement;
+    private GuarantorRequirementResponse guarantorRequirement;
     private EducationRequirementResponse educationRequirement;
     private FinancialHistoryRequirementResponse financialHistoryRequirement;
     private HousingRequirementResponse housingRequirement;

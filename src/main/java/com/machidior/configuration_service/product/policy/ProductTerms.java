@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "loan_product_terms")
@@ -45,9 +46,10 @@ public class ProductTerms {
     @Column(nullable = false)
     private TenureUnit tenureUnit;
 
+    @ElementCollection
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private InstallmentFrequency installmentFrequency;
+    private List<InstallmentFrequency> allowedInstallmentFrequencies;
 
     private Integer minInstallments;
     private Integer maxInstallments;

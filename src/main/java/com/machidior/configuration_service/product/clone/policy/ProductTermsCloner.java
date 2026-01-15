@@ -6,6 +6,7 @@ import com.machidior.configuration_service.product.LoanProductVersion;
 import com.machidior.configuration_service.repository.ProductTermsRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -39,7 +40,9 @@ public class ProductTermsCloner
         copy.setMinTenure(source.getMinTenure());
         copy.setMaxTenure(source.getMaxTenure());
         copy.setTenureUnit(source.getTenureUnit());
-        copy.setInstallmentFrequency(source.getInstallmentFrequency());
+        copy.setAllowedInstallmentFrequencies(source.getAllowedInstallmentFrequencies() == null
+                ? null
+                : List.copyOf(source.getAllowedInstallmentFrequencies()));
         copy.setMinInstallments(source.getMinInstallments());
         copy.setMaxInstallments(source.getMaxInstallments());
         copy.setRepaymentDayOfTheMonth(

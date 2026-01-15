@@ -33,7 +33,6 @@ public class BusinessRequirement {
     private Boolean registrationRequired;
     private Boolean businessLicenseRequired;
     private Boolean cashFlowStatementRequired;
-    private Boolean bankStatementRequired;
     private Boolean tinCertificateRequired;
     private Boolean tinNumberRequired;
     private Boolean insuranceComprehensiveCoverRequired;

@@ -3,6 +3,7 @@ package com.machidior.configuration_service.dtos.request.policy;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,7 +26,7 @@ public class ProductTermsRequest {
 
     private String tenureUnit;
 
-    private String installmentFrequency;
+    private List<String> allowedInstallmentFrequencies;
 
     private Integer minInstallments;
     private Integer maxInstallments;

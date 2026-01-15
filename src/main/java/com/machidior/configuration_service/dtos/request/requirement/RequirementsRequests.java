@@ -12,7 +12,7 @@ public class RequirementsRequests {
     private SolidarityRequirementRequest solidarityRequirement;
     private AssetRequirementRequest assetRequirement;
     private CollateralRequirementRequest collateralRequirement;
-    private GuaranteeRequirementRequest guaranteeRequirement;
+    private GuarantorRequirementRequest guarantorRequirement;
     private EmploymentRequirementRequest employmentRequirement;
     private BusinessRequirementRequest businessRequirement;
     private DigitalConsentRequirementRequest digitalConsentRequirement;

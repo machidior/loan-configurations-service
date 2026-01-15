@@ -1,7 +1,7 @@
 package com.machidior.configuration_service.mapper;
 
-import com.machidior.configuration_service.dtos.request.requirement.GuaranteeRequirementRequest;
-import com.machidior.configuration_service.dtos.response.requirement.GuaranteeRequirementResponse;
+import com.machidior.configuration_service.dtos.request.requirement.GuarantorRequirementRequest;
+import com.machidior.configuration_service.dtos.response.requirement.GuarantorRequirementResponse;
 import com.machidior.configuration_service.enums.RequirementType;
 import com.machidior.configuration_service.product.requirement.GuarantorRequirement;
 import com.machidior.configuration_service.product.LoanProductVersion;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GuarantorRequirementMapper {
 
-    public GuarantorRequirement toEntity(GuaranteeRequirementRequest request, LoanProductVersion productVersion) {
+    public GuarantorRequirement toEntity(GuarantorRequirementRequest request, LoanProductVersion productVersion) {
         return GuarantorRequirement.builder()
                 .productVersion(productVersion)
                 .type(RequirementType.GUARANTOR)
@@ -21,12 +21,15 @@ public class GuarantorRequirementMapper {
                 .guarantorIncomeProofRequired(request.getGuarantorIncomeProofRequired())
                 .guarantorEmploymentRequired(request.getGuarantorEmploymentRequired())
                 .guarantorRelationRequired(request.getGuarantorRelationRequired())
+                .passportPhotoRequired(request.getPassportPhotoRequired())
+                .idDocumentRequired(request.getIdDocumentRequired())
+                .guarantorConsentRequired(request.getGuarantorConsentRequired())
                 .minGuarantorIncome(request.getMinGuarantorIncome())
                 .build();
     }
 
-    public GuaranteeRequirementResponse toResponse(GuarantorRequirement requirement) {
-        return GuaranteeRequirementResponse.builder()
+    public GuarantorRequirementResponse toResponse(GuarantorRequirement requirement) {
+        return GuarantorRequirementResponse.builder()
                 .id(requirement.getId())
                 .type(requirement.getType())
                 .enabled(requirement.getEnabled())
@@ -36,6 +39,9 @@ public class GuarantorRequirementMapper {
                 .guarantorIncomeProofRequired(requirement.getGuarantorIncomeProofRequired())
                 .guarantorEmploymentRequired(requirement.getGuarantorEmploymentRequired())
                 .guarantorRelationRequired(requirement.getGuarantorRelationRequired())
+                .passportPhotoRequired(requirement.getPassportPhotoRequired())
+                .idDocumentRequired(requirement.getIdDocumentRequired())
+                .guarantorConsentRequired(requirement.getGuarantorConsentRequired())
                 .minGuarantorIncome(requirement.getMinGuarantorIncome())
                 .build();
     }

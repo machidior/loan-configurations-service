@@ -18,7 +18,7 @@ public class InterestPolicyResponse {
 
     private InterestType interestType;
 
-    private BigDecimal annualInterestRate;
+    private BigDecimal monthlyInterestRate;
 
     private BigDecimal minInterestRate;
     private BigDecimal maxInterestRate;

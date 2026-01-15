@@ -38,5 +38,9 @@ public class GuarantorRequirement {
     private Boolean guarantorEmploymentRequired;
     private Boolean guarantorRelationRequired;
 
+    private Boolean passportPhotoRequired;
+    private Boolean idDocumentRequired;
+    private Boolean guarantorConsentRequired;
+
     private BigDecimal minGuarantorIncome;
 }

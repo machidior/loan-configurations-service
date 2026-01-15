@@ -1,13 +1,14 @@
 package com.machidior.configuration_service.service.impl;
 
 import com.machidior.configuration_service.dtos.response.LoanProductVersionResponse;
+import com.machidior.configuration_service.enums.VersionStatus;
 import com.machidior.configuration_service.mapper.LoanProductVersionMapper;
 import com.machidior.configuration_service.product.clone.ProductConfigCloneRegistry;
 import com.machidior.configuration_service.product.LoanProductVersion;
 import com.machidior.configuration_service.repository.LoanProductVersionRepository;
 import com.machidior.configuration_service.service.ProductVersionCloneService;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -42,11 +43,13 @@ public class ProductVersionCloneServiceImpl implements ProductVersionCloneServic
                 .version(nextVersion)
                 .locked(false)
                 .active(false)
+                .status(VersionStatus.DRAFT)
                 .name(source.getName())
                 .code(source.getCode())
                 .description(source.getDescription())
                 .category(source.getCategory())
-                .effectiveFrom(source.getEffectiveFrom())
+//                TODO: Decide if we want to copy effective dates
+//                .effectiveFrom(source.getEffectiveFrom())
                 .build();
 
         versionRepository.save(target);

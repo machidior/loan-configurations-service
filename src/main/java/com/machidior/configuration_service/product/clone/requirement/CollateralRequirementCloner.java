@@ -38,7 +38,7 @@ public class CollateralRequirementCloner
         copy.setInsuranceRequired(source.getInsuranceRequired());
         copy.setValuationRequired(source.getValuationRequired());
         copy.setPhotoRequired(source.getPhotoRequired());
-        copy.setMinAverageMonthlyTurnOver(source.getMinAverageMonthlyTurnOver());
+        copy.setMinLoanAmountToValueRatio(source.getMinLoanAmountToValueRatio());
         return copy;
     }
 

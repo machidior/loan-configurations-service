@@ -34,6 +34,9 @@ public class GuarantorRequirementCloner extends AbstractProductConfigCloner<Guar
         copy.setGuarantorIncomeProofRequired(source.getGuarantorIncomeProofRequired());
         copy.setGuarantorEmploymentRequired(source.getGuarantorEmploymentRequired());
         copy.setGuarantorRelationRequired(source.getGuarantorRelationRequired());
+        copy.setPassportPhotoRequired(source.getPassportPhotoRequired());
+        copy.setIdDocumentRequired(source.getIdDocumentRequired());
+        copy.setGuarantorConsentRequired(source.getGuarantorConsentRequired());
         copy.setMinGuarantorIncome(source.getMinGuarantorIncome());
         return copy;
     }

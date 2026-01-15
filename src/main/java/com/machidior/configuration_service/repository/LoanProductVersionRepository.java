@@ -3,7 +3,6 @@ package com.machidior.configuration_service.repository;
 import com.machidior.configuration_service.enums.VersionStatus;
 import com.machidior.configuration_service.product.LoanProduct;
 import com.machidior.configuration_service.product.LoanProductVersion;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,71 +27,70 @@ public interface LoanProductVersionRepository extends JpaRepository<LoanProductV
     @Query("SELECT COALESCE(MAX(v.version), 0) FROM LoanProductVersion v WHERE v.product.id = :productId")
     Optional<Integer> findMaxVersionByProduct(@Param("productId") Long productId);
 
-    @Query("""
-    SELECT CASE WHEN COUNT(v) > 0 THEN TRUE ELSE FALSE END
-    FROM LoanProductVersion v
-    WHERE v.product.id = :productId
-      AND v.status = com.machidior.configuration_service.enums.VersionStatus.ACTIVE
-      AND (
-            (:effectiveTo IS NULL AND v.effectiveTo IS NULL)
-            OR (
-                :effectiveFrom <= v.effectiveTo OR v.effectiveTo IS NULL
-            )
-            AND (
-                :effectiveTo >= v.effectiveFrom OR :effectiveTo IS NULL
-            )
-      )
-      AND (
-            :excludeVersionId IS NULL OR v.id <> :excludeVersionId
-      )
-""")
-    boolean hasOverlappingActiveVersion(
-            @Param("productId") Long productId,
-            @Param("effectiveFrom") LocalDate effectiveFrom,
-            @Param("effectiveTo") LocalDate effectiveTo,
-            @Param("excludeVersionId") Long excludeVersionId
-    );
+//    ToDo: Check for overlapping active versions
+//    @Query("""
+//    SELECT CASE WHEN COUNT(v) > 0 THEN TRUE ELSE FALSE END
+//    FROM LoanProductVersion v
+//    WHERE v.product.id = :productId
+//      AND v.status = com.machidior.configuration_service.enums.VersionStatus.ACTIVE
+//      AND (
+//            (:effectiveTo IS NULL AND v.effectiveTo IS NULL)
+//            OR (
+//                :effectiveFrom <= v.effectiveTo OR v.effectiveTo IS NULL
+//            )
+//            AND (
+//                :effectiveTo >= v.effectiveFrom OR :effectiveTo IS NULL
+//            )
+//      )
+//      AND (
+//            :excludeVersionId IS NULL OR v.id <> :excludeVersionId
+//      )
+//""")
+//    boolean hasOverlappingActiveVersion(
+//            @Param("productId") Long productId,
+//            @Param("effectiveFrom") LocalDate effectiveFrom,
+//            @Param("effectiveTo") LocalDate effectiveTo,
+//            @Param("excludeVersionId") Long excludeVersionId
+//    );
+//
+//
+//    default boolean hasOverlappingActiveVersion(
+//            Long productId,
+//            LocalDate effectiveFrom,
+//            LocalDate effectiveTo
+//    ) {
+//        return hasOverlappingActiveVersion(productId, effectiveFrom, effectiveTo, null);
+//    }
 
 
-    // Overloaded method without excludeVersionId
-    default boolean hasOverlappingActiveVersion(
-            Long productId,
-            LocalDate effectiveFrom,
-            LocalDate effectiveTo
-    ) {
-        return hasOverlappingActiveVersion(productId, effectiveFrom, effectiveTo, null);
-    }
+//    ToDo: Find active versions at a specific date
+//    @Query("""
+//        SELECT v FROM LoanProductVersion v
+//        WHERE v.product.id = :productId
+//        AND v.status = com.machidior.configuration_service.enums.VersionStatus.ACTIVE
+//        AND v.effectiveFrom <= :date
+//        AND (v.effectiveTo IS NULL OR v.effectiveTo >= :date)
+//    """)
+//    List<LoanProductVersion> findActiveVersionsAtDate(
+//            @Param("productId") Long productId,
+//            @Param("date") LocalDate date);
 
-
-    // Find active versions within a date range
-    @Query("""
-        SELECT v FROM LoanProductVersion v 
-        WHERE v.product.id = :productId 
-        AND v.status = com.machidior.configuration_service.enums.VersionStatus.ACTIVE
-        AND v.effectiveFrom <= :date
-        AND (v.effectiveTo IS NULL OR v.effectiveTo >= :date)
-    """)
-    List<LoanProductVersion> findActiveVersionsAtDate(
-            @Param("productId") Long productId,
-            @Param("date") LocalDate date);
-
-    // Find version by product and version number
     Optional<LoanProductVersion> findByProductAndVersion(LoanProduct product, Integer versionNumber);
 
-    // Count versions by status
     Long countByProductAndStatus(LoanProduct product, VersionStatus status);
 
-    // Find all DRAFT versions (for cleanup or admin operations)
     List<LoanProductVersion> findByStatus(VersionStatus status);
 
-    // Find versions expiring soon (for notifications)
-    @Query("""
-        SELECT v FROM LoanProductVersion v 
-        WHERE v.status = com.machidior.configuration_service.enums.VersionStatus.ACTIVE
-        AND v.effectiveTo IS NOT NULL 
-        AND v.effectiveTo BETWEEN :startDate AND :endDate
-    """)
-    List<LoanProductVersion> findVersionsExpiringBetween(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+    List<LoanProductVersion> findAllByProductAndStatus(LoanProduct product, VersionStatus versionStatus);
+
+//    ToDo: Find versions expiring between dates
+//    @Query("""
+//        SELECT v FROM LoanProductVersion v
+//        WHERE v.status = com.machidior.configuration_service.enums.VersionStatus.ACTIVE
+//        AND v.effectiveTo IS NOT NULL
+//        AND v.effectiveTo BETWEEN :startDate AND :endDate
+//    """)
+//    List<LoanProductVersion> findVersionsExpiringBetween(
+//            @Param("startDate") LocalDate startDate,
+//            @Param("endDate") LocalDate endDate);
 }

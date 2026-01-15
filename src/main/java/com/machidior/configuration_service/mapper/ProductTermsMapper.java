@@ -10,6 +10,9 @@ import com.machidior.configuration_service.product.LoanProductVersion;
 import com.machidior.configuration_service.product.policy.ProductTerms;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class ProductTermsMapper {
 
@@ -22,7 +25,7 @@ public class ProductTermsMapper {
                 .minTenure(request.getMinTenure())
                 .maxTenure(request.getMaxTenure())
                 .tenureUnit(parseTenureUnit(request.getTenureUnit()))
-                .installmentFrequency(parseInstallmentFrequency(request.getInstallmentFrequency()))
+                .allowedInstallmentFrequencies(parseAllowedInstallmentFrequencies(request.getAllowedInstallmentFrequencies()))
                 .minInstallments(request.getMinInstallments())
                 .maxInstallments(request.getMaxInstallments())
                 .repaymentDayOfTheMonth(request.getRepaymentDayOfTheMonth())
@@ -56,7 +59,7 @@ public class ProductTermsMapper {
                 .minTenure(terms.getMinTenure())
                 .maxTenure(terms.getMaxTenure())
                 .tenureUnit(terms.getTenureUnit())
-                .installmentFrequency(terms.getInstallmentFrequency())
+                .allowedInstallmentFrequencies(terms.getAllowedInstallmentFrequencies())
                 .minInstallments(terms.getMinInstallments())
                 .maxInstallments(terms.getMaxInstallments())
                 .repaymentDayOfTheMonth(terms.getRepaymentDayOfTheMonth())
@@ -89,12 +92,24 @@ public class ProductTermsMapper {
         }
     }
 
-    private InstallmentFrequency parseInstallmentFrequency(String frequency) {
-        try {
-            return frequency != null? InstallmentFrequency.valueOf(frequency.toUpperCase()): null;
-        } catch (InvalidEnumException e) {
-            throw new InvalidEnumException("Invalid installment frequency provided: " + frequency);
+    private List<InstallmentFrequency> parseAllowedInstallmentFrequencies(List<String> installmentFrequencies) {
+        if (installmentFrequencies == null || installmentFrequencies.isEmpty()) {
+            return List.of();
         }
+
+        List<InstallmentFrequency> parsedInstallmentFrequencies = new ArrayList<>();
+
+        for (String frequency : installmentFrequencies) {
+            try {
+                parsedInstallmentFrequencies.add(
+                        InstallmentFrequency.valueOf(frequency.trim().toUpperCase())
+                );
+            } catch (IllegalArgumentException ex) {
+                throw new InvalidEnumException("Invalid installment frequency: " + frequency);
+            }
+        }
+
+        return parsedInstallmentFrequencies;
     }
 
     private DisbursementMethod parseDisbursementMethod(String method) {

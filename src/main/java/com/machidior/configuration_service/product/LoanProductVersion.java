@@ -5,6 +5,8 @@ import com.machidior.configuration_service.enums.VersionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,16 +48,15 @@ public class LoanProductVersion {
     @Enumerated(EnumType.STRING)
     private LoanProductCategory category;
 
-    @Column(name = "effective_from")
-    private LocalDate effectiveFrom;
+//    @Column(name = "effective_from")
+//    private LocalDate effectiveFrom;
+//    private LocalDate effectiveTo;
 
-    private LocalDate effectiveTo;
     private String approvedBy;
     private LocalDateTime approvedAt;
 
-    @CreationTimestamp
+    @CreatedDate
     private LocalDateTime createdAt;
-
     private String createdBy;
 
 }

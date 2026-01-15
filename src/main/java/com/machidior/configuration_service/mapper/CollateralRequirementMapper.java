@@ -30,7 +30,7 @@ public class CollateralRequirementMapper {
                 .insuranceRequired(request.getInsuranceRequired())
                 .valuationRequired(request.getValuationRequired())
                 .photoRequired(request.getPhotoRequired())
-                .minAverageMonthlyTurnOver(request.getMinAverageMonthlyTurnOver())
+                .minLoanAmountToValueRatio(request.getMinLoanAmountToValueRatio())
                 .build();
     }
 
@@ -48,7 +48,7 @@ public class CollateralRequirementMapper {
                 .insuranceRequired(requirement.getInsuranceRequired())
                 .valuationRequired(requirement.getValuationRequired())
                 .photoRequired(requirement.getPhotoRequired())
-                .minAverageMonthlyTurnOver(requirement.getMinAverageMonthlyTurnOver())
+                .minLoanAmountToValueRatio(requirement.getMinLoanAmountToValueRatio())
                 .build();
     }
 

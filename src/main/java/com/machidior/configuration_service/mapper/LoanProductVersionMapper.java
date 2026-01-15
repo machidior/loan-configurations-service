@@ -16,7 +16,7 @@ public class LoanProductVersionMapper {
                 .active(productVersion.getActive())
                 .status(productVersion.getStatus())
                 .description(productVersion.getDescription())
-                .effectiveFrom(productVersion.getEffectiveFrom())
+//                .effectiveFrom(productVersion.getEffectiveFrom())
                 .createdAt(productVersion.getCreatedAt())
                 .build();
     }

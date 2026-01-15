@@ -1,5 +1,6 @@
-package com.machidior.configuration_service.dtos.request.requirement;
+package com.machidior.configuration_service.dtos.response.requirement;
 
+import com.machidior.configuration_service.enums.RequirementType;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -9,10 +10,10 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GuaranteeRequirementRequest {
+public class GuarantorRequirementResponse {
 
-    private Long productVersionId;
-    private String type;
+    private Long id;
+    private RequirementType type;
     private Boolean enabled;
     private Boolean mandatory;
 
@@ -22,6 +23,10 @@ public class GuaranteeRequirementRequest {
     private Boolean guarantorIncomeProofRequired;
     private Boolean guarantorEmploymentRequired;
     private Boolean guarantorRelationRequired;
+
+    private Boolean passportPhotoRequired;
+    private Boolean idDocumentRequired;
+    private Boolean guarantorConsentRequired;
 
     private BigDecimal minGuarantorIncome;
 }

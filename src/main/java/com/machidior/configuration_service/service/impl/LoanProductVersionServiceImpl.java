@@ -2,6 +2,7 @@ package com.machidior.configuration_service.service.impl;
 
 import com.machidior.configuration_service.dtos.request.ApproveVersionRequest;
 import com.machidior.configuration_service.dtos.request.LoanProductVersionRequest;
+import com.machidior.configuration_service.dtos.response.ActiveProductVersionBasicDetails;
 import com.machidior.configuration_service.dtos.response.LoanProductVersionResponse;
 import com.machidior.configuration_service.enums.VersionStatus;
 import com.machidior.configuration_service.exceptions.BusinessException;
@@ -17,12 +18,12 @@ import com.machidior.configuration_service.repository.LoanProductVersionReposito
 import com.machidior.configuration_service.repository.*;
 import com.machidior.configuration_service.service.LoanProductVersionService;
 import com.machidior.configuration_service.service.ProductConfigurationService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -100,8 +101,7 @@ public class LoanProductVersionServiceImpl implements LoanProductVersionService 
         return versionMapper.toResponse(updatedVersion);
     }
 
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public LoanProductVersionResponse cloneVersion(Long sourceVersionId, String createdBy) {
         log.info("Cloning version: {}", sourceVersionId);
@@ -155,13 +155,13 @@ public class LoanProductVersionServiceImpl implements LoanProductVersionService 
 
         validateConfigurationCompleteness(version.getId());
 
-        validateEffectiveDates(version, request);
+//        validateEffectiveDates(version, request);
 
-        handleVersionTransition(version, request);
+//        handleVersionTransition(version, request);
 
         version.setStatus(VersionStatus.ACTIVE);
-        version.setEffectiveFrom(request.getEffectiveFrom());
-        version.setEffectiveTo(request.getEffectiveTo());
+//        version.setEffectiveFrom(request.getEffectiveFrom());
+//        version.setEffectiveTo(request.getEffectiveTo());
         version.setApprovedAt(LocalDateTime.now());
         version.setApprovedBy(request.getApprovedBy());
         version.setDescription(request.getDescription() != null ? request.getDescription() : version.getDescription());
@@ -170,6 +170,42 @@ public class LoanProductVersionServiceImpl implements LoanProductVersionService 
         log.info("Version {} approved and activated", versionId);
 
         return versionMapper.toResponse(approvedVersion);
+    }
+
+    @Override
+    public LoanProductVersionResponse activateVersion(Long versionId) {
+        log.info("Activating version: {}", versionId);
+
+        LoanProductVersion version = versionRepository.findById(versionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Version not found with ID: " + versionId));
+// ToDo: Decide if we want to restrict activation to DRAFT only
+//        if (version.getStatus() != VersionStatus.DRAFT) {
+//            throw new BusinessException("Only DRAFT versions can be activated. Current status: " + version.getStatus());
+//        }
+
+        List<LoanProductVersion> activeVersions = versionRepository.findAllByProductAndStatus(
+                version.getProduct(), VersionStatus.ACTIVE);
+        for (LoanProductVersion activeVersion : activeVersions) {
+            activeVersion.setStatus(VersionStatus.ARCHIVED);
+            versionRepository.save(activeVersion);
+            log.info("Archived overlapping version {}", activeVersion.getVersion());
+        }
+
+        validateConfigurationCompleteness(version.getId());
+
+        version.setLocked(true);
+        version.setActive(true);
+        version.setStatus(VersionStatus.ACTIVE);
+        version.setApprovedAt(LocalDateTime.now());
+        version.setApprovedBy("system-activation");
+        version.setDescription("Activated by system on " + LocalDateTime.now());
+
+        LoanProductVersion activatedVersion = versionRepository.save(version);
+        LoanProductVersionResponse response = versionMapper.toResponse(activatedVersion);
+        response.setConfigurations(configurationService.getFullConfiguration(activatedVersion.getId()));
+        log.info("Version {} activated", versionId);
+
+        return response;
     }
 
     @Override
@@ -184,7 +220,8 @@ public class LoanProductVersionServiceImpl implements LoanProductVersionService 
         }
 
         version.setStatus(VersionStatus.ARCHIVED);
-        version.setEffectiveFrom(LocalDate.now()); // Archive effective immediately
+//        ToDo: Decide on effective date handling for archiving
+//        version.setEffectiveFrom(LocalDate.now()); // Archive effective immediately
         version.setDescription("Archived by " + archivedBy + " on " + LocalDateTime.now());
 
         LoanProductVersion archivedVersion = versionRepository.save(version);
@@ -264,46 +301,48 @@ public class LoanProductVersionServiceImpl implements LoanProductVersionService 
 
     }
 
-    private void validateEffectiveDates(LoanProductVersion version, ApproveVersionRequest request) {
-        if (request.getEffectiveFrom() == null) {
-            throw new BusinessException("Effective from date is required for approval");
-        }
+//    ToDo: Revisit effective date validations and version transitions
+//    private void validateEffectiveDates(LoanProductVersion version, ApproveVersionRequest request) {
+//        if (request.getEffectiveFrom() == null) {
+//            throw new BusinessException("Effective from date is required for approval");
+//        }
+//
+//        if (request.getEffectiveTo() != null && request.getEffectiveTo().isBefore(request.getEffectiveFrom())) {
+//            throw new BusinessException("Effective to date must be after effective from date");
+//        }
+//
+//        // Check for overlapping active versions
+//        boolean hasOverlap = versionRepository.hasOverlappingActiveVersion(
+//                version.getProduct().getId(),
+//                request.getEffectiveFrom(),
+//                request.getEffectiveTo());
+//
+//        if (hasOverlap) {
+//            throw new BusinessException("Effective dates overlap with existing ACTIVE version");
+//        }
+//    }
 
-        if (request.getEffectiveTo() != null && request.getEffectiveTo().isBefore(request.getEffectiveFrom())) {
-            throw new BusinessException("Effective to date must be after effective from date");
-        }
-
-        // Check for overlapping active versions
-        boolean hasOverlap = versionRepository.hasOverlappingActiveVersion(
-                version.getProduct().getId(),
-                request.getEffectiveFrom(),
-                request.getEffectiveTo());
-
-        if (hasOverlap) {
-            throw new BusinessException("Effective dates overlap with existing ACTIVE version");
-        }
-    }
-
-    private void handleVersionTransition(LoanProductVersion newVersion, ApproveVersionRequest request) {
-        // Find currently ACTIVE version for this product
-        LoanProductVersion activeVersion = versionRepository.findByProductAndStatus(
-                newVersion.getProduct(), VersionStatus.ACTIVE)
-                .orElseThrow(()-> new BusinessException("No ACTIVE version found for product"));
-
-            // Check if new version replaces the active one
-            if (request.getEffectiveFrom().isBefore(activeVersion.getEffectiveTo()) ||
-                    (activeVersion.getEffectiveTo() == null && request.getEffectiveFrom().isAfter(activeVersion.getEffectiveFrom()))) {
-
-                // Archive the old version
-                activeVersion.setStatus(VersionStatus.ARCHIVED);
-                if (request.getEffectiveFrom().isAfter(activeVersion.getEffectiveFrom())) {
-                    activeVersion.setEffectiveTo(request.getEffectiveFrom().minusDays(1));
-                }
-                versionRepository.save(activeVersion);
-                log.info("Archived overlapping version {}", activeVersion.getVersion());
-            }
-
-    }
+//    ToDo: Revisit version transition handling
+//    private void handleVersionTransition(LoanProductVersion newVersion, ApproveVersionRequest request) {
+//        // Find currently ACTIVE version for this product
+//        LoanProductVersion activeVersion = versionRepository.findByProductAndStatus(
+//                newVersion.getProduct(), VersionStatus.ACTIVE)
+//                .orElseThrow(()-> new BusinessException("No ACTIVE version found for product"));
+//
+//            // Check if new version replaces the active one
+//            if (request.getEffectiveFrom().isBefore(activeVersion.getEffectiveTo()) ||
+//                    (activeVersion.getEffectiveTo() == null && request.getEffectiveFrom().isAfter(activeVersion.getEffectiveFrom()))) {
+//
+//                // Archive the old version
+//                activeVersion.setStatus(VersionStatus.ARCHIVED);
+//                if (request.getEffectiveFrom().isAfter(activeVersion.getEffectiveFrom())) {
+//                    activeVersion.setEffectiveTo(request.getEffectiveFrom().minusDays(1));
+//                }
+//                versionRepository.save(activeVersion);
+//                log.info("Archived overlapping version {}", activeVersion.getVersion());
+//            }
+//
+//    }
 
     @Override
     public LoanProductVersionResponse getVersionById(Long versionId) {
@@ -312,6 +351,20 @@ public class LoanProductVersionServiceImpl implements LoanProductVersionService 
         LoanProductVersionResponse response = versionMapper.toResponse(version);
         response.setConfigurations(configurationService.getFullConfiguration(version.getId()));
         return response;
+    }
+
+    @Override
+    public ActiveProductVersionBasicDetails getActiveVersionBasicDetails(Long productId) {
+        LoanProduct product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
+        LoanProductVersion activeVersion = versionRepository.findByProductAndStatus(product, VersionStatus.ACTIVE)
+                .orElseThrow(() -> new ResourceNotFoundException("No ACTIVE version found for product: " + productId));
+        return ActiveProductVersionBasicDetails.builder()
+                .productId(activeVersion.getProduct().getId())
+                .productVersionId(activeVersion.getId())
+                .productName(activeVersion.getProduct().getName())
+                .productCode(activeVersion.getProduct().getCode())
+                .build();
     }
 
 }

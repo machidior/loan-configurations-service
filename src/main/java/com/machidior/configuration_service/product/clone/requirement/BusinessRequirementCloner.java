@@ -33,7 +33,6 @@ public class BusinessRequirementCloner
         copy.setRegistrationRequired(source.getRegistrationRequired());
         copy.setBusinessLicenseRequired(source.getBusinessLicenseRequired());
         copy.setCashFlowStatementRequired(source.getCashFlowStatementRequired());
-        copy.setBankStatementRequired(source.getBankStatementRequired());
         copy.setTinCertificateRequired(source.getTinCertificateRequired());
         copy.setTinNumberRequired(source.getTinNumberRequired());
         copy.setInsuranceComprehensiveCoverRequired(source.getInsuranceComprehensiveCoverRequired());

@@ -33,7 +33,7 @@ public class InterestPolicyCloner
         copy.setProductVersion(targetVersion);
 
         copy.setInterestType(source.getInterestType());
-        copy.setAnnualInterestRate(source.getAnnualInterestRate());
+        copy.setMonthlyInterestRate(source.getMonthlyInterestRate());
         copy.setMinInterestRate(source.getMinInterestRate());
         copy.setMaxInterestRate(source.getMaxInterestRate());
         copy.setAllowedRateOverride(source.getAllowedRateOverride());
